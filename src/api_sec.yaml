@@ -1,0 +1,150 @@
+openapi: 3.0.1
+info:
+  title: TronLib Docs
+  description: >-
+   The TronLib Docs 1.0.3 is a robust RESTful API granting developers seamless access to the Tron blockchain. Create, manage addresses, send/receive TRX and TRC-20 tokens, and get instant payment notifications for incoming transactions. It's secure with HTTPS, JSON format, and supports various languages and frameworks, ensuring straightforward integration. Ideal for both seasoned developers and newcomers exploring the Tron blockchain.
+  version: 1.0.1
+servers:
+  - url: /
+paths:
+  /GetApiKey:
+    get:
+      summary: Generate a new API key
+      responses:
+        '201':
+          description: API key generated and saved to the database
+        '500':
+          description: Error generating API key
+  /GenerateAddress:
+    get:
+      summary: Generate a new TRON address
+      parameters:
+        - name: apikey
+          in: query
+          required: true
+          description: API key
+        - name: ipnUrl
+          in: query
+          required: true
+          description: IPN URL
+      responses:
+        '201':
+          description: Address generated successfully
+        '400':
+          description: Bad request, missing or invalid parameters
+        '401':
+          description: Invalid API key
+        '504':
+          description: Gateway Timeout
+  /blocknumber:
+    get:
+      summary: Get block numbers
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Internal Server Error
+  /tron/Transfer:
+    post:
+      summary: Transfer TRON tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - receiver
+                - amount
+                - private_key
+                - apikey
+              properties:
+                receiver:
+                  type: string
+                  description: Receiver's address
+                amount:
+                  type: number
+                  description: Amount of TRX to transfer
+                private_key:
+                  type: string
+                  description: Sender's private key
+                apikey:
+                  type: string
+                  description: API key
+      responses:
+        '200':
+          description: Token transfer successful
+        '400':
+          description: Bad request, missing or invalid parameters
+        '401':
+          description: Invalid API key
+  /trc20/Transfer:
+    post:
+      summary: Transfer TRC-20 tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - receiver
+                - amount
+                - private_key
+                - apikey
+                - contractAddress
+              properties:
+                receiver:
+                  type: string
+                  description: Receiver's address
+                amount:
+                  type: number
+                  description: Amount of tokens to transfer
+                private_key:
+                  type: string
+                  description: Sender's private key
+                apikey:
+                  type: string
+                  description: API key
+                contractAddress:
+                  type: string
+                  description: Token contract address
+      responses:
+        '200':
+          description: Token transfer successful
+        '400':
+          description: Bad request, missing or invalid parameters
+        '401':
+          description: Invalid API key
+  /history:
+    get:
+      summary: Retrieve transaction history
+      parameters:
+        - name: apiKey
+          in: query
+          required: true
+          description: API key
+        - name: address
+          in: query
+          description: Filter by address
+        - name: txid
+          in: query
+          description: Filter by transaction ID
+        - name: amount
+          in: query
+          description: Filter by amount
+        - name: status
+          in: query
+          description: Filter by transaction status
+        - name: contractAddress
+          in: query
+          description: Filter by contract address
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request, missing or invalid parameters
+        '401':
+          description: Invalid API key
+        '500':
+          description: Internal Server Error
